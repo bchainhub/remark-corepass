@@ -44,7 +44,7 @@ const makeStrikethroughNode = (text: string): TextNode => {
 
 const shortenId = (hash: string) => `${hash.slice(0, 4)}…${hash.slice(-4)}`;
 
-const corepassPattern = /\[(!?)(((cb|ab|ce)[0-9]{2}[0-9a-f]{40})|((?:[a-z0-9_-]|\p{Emoji})+(?:\.(?:[a-z0-9_-]|\p{Emoji})+)*\.([a-z0-9]+)))@cp\]/giu;
+const corepassPattern = /\[(!?)(((cb|ab|ce)[0-9]{2}[0-9a-f]{40})|((?:[a-z0-9_-]|\p{Emoji})+(?:\.(?:[a-z0-9_-]|\p{Emoji})+)*\.([a-z0-9]+)))@coreid\]/giu;
 
 function isTextNode(node: Node): node is TextNode {
   return node.type === 'text';
@@ -78,21 +78,20 @@ export default function remarkCorepass(options: CorepassOptions = {}): (ast: Nod
       ) => {
         if (offset > lastIndex) {
           newNodes.push(makeTextNode(textNode.value.slice(lastIndex, offset)));
-        } else {
-          let id = fullId as string;
-          let willSkip = (finalOptions.enableSkippingIcanCheck) ? ((skip === '!') ? true : false) : false;
-          let displayName = '';
-          if (cpId !== '' && cpId !== undefined) {
-            displayName = shortenId(id.toUpperCase());
-            if (finalOptions.enableIcanCheck && !willSkip && !Ican.isValid(id, true)) {
-              newNodes.push(makeStrikethroughNode(`${displayName}@cp`));
-            } else {
-              newNodes.push(makeLinkNode(`corepass:${id.toLowerCase()}`, `${displayName}@cp`, displayName));
-            }
+        }
+        let id = fullId as string;
+        let willSkip = (finalOptions.enableSkippingIcanCheck) ? ((skip === '!') ? true : false) : false;
+        let displayName = '';
+        if (cpId !== '' && cpId !== undefined) {
+          displayName = shortenId(id.toUpperCase());
+          if (finalOptions.enableIcanCheck && !willSkip && !Ican.isValid(id, true)) {
+            newNodes.push(makeStrikethroughNode(`${displayName}@coreid`));
           } else {
-            displayName = `${id}`;
-            newNodes.push(makeLinkNode(`corepass:${id.toLowerCase()}`, `${displayName}@cp`, displayName));
+            newNodes.push(makeLinkNode(`corepass:${id.toLowerCase()}`, `${displayName}@coreid`, displayName));
           }
+        } else {
+          displayName = `${id}`;
+          newNodes.push(makeLinkNode(`corepass:${id.toLowerCase()}`, `${displayName}@coreid`, displayName));
         }
         lastIndex = offset + match.length;
         return '';
