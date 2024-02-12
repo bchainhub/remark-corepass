@@ -32,7 +32,7 @@ remark()
   });
 ```
 
-The plugin searches for CorePass notations in the format `[domain@cp]` or `[!cb1234...@cp]` in your markdown content, converting them into clickable links and validating ICAN identifiers when enabled.
+The plugin searches for CorePass notations in the format `[domain@coreid]` or `[!cb1234...@coreid]` in your markdown content, converting them into clickable links and validating ICAN identifiers when enabled.
 
 ## Options
 
