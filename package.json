@@ -1,6 +1,6 @@
 {
   "name": "remark-corepass",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A Remark plugin to transform CorePass notations into markdown links.",
   "main": "dist/index.js",
   "types": "types/index.d.ts",

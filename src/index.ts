@@ -23,6 +23,11 @@ interface TextNode extends Node {
   value: string;
 }
 
+interface DelNode extends Node {
+  type: 'delete';
+  children: Array<TextNode>;
+}
+
 const makeLinkNode = (url: string, text: string, title?: string): LinkNode => ({
   type: 'link',
   url,
@@ -35,12 +40,10 @@ const makeTextNode = (text: string): TextNode => ({
   value: text,
 });
 
-const makeStrikethroughNode = (text: string): TextNode => {
-  return {
-    type: 'text',
-    value: `~~${text}~~`,
-  };
-};
+const makeStrikethroughNode = (text: string): DelNode => ({
+  type: 'delete',
+  children: [{ type: 'text', value: text }],
+});
 
 const shortenId = (hash: string) => `${hash.slice(0, 4)}…${hash.slice(-4)}`;
 
@@ -81,13 +84,14 @@ export default function remarkCorepass(options: CorepassOptions = {}): (ast: Nod
         }
         let id = fullId as string;
         let willSkip = (finalOptions.enableSkippingIcanCheck) ? ((skip === '!') ? true : false) : false;
-        let displayName = '';
+        let displayName, fullName;
         if (cpId !== '' && cpId !== undefined) {
-          displayName = shortenId(id.toUpperCase());
+          fullName = id.toUpperCase();
+          displayName = shortenId(fullName);
           if (finalOptions.enableIcanCheck && !willSkip && !Ican.isValid(id, true)) {
             newNodes.push(makeStrikethroughNode(`${displayName}@coreid`));
           } else {
-            newNodes.push(makeLinkNode(`corepass:${id.toLowerCase()}`, `${displayName}@coreid`, displayName));
+            newNodes.push(makeLinkNode(`corepass:${id.toLowerCase()}`, `${displayName}@coreid`, fullName));
           }
         } else {
           displayName = `${id}`;
