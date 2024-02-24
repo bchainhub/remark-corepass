@@ -8,5 +8,5 @@ declare module 'remark-corepass' {
 
   function remarkCorepass(options?: CorepassOptions): (ast: Node) => void;
 
-  export = remarkCorepass;
+  export default remarkCorepass;
 }
