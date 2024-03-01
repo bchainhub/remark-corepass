@@ -20,16 +20,20 @@ yarn add remark-corepass
 
 Integrate the plugin into your Remark processing pipeline to automatically convert CorePass notations and optionally validate ICAN (International Core Asset Number) identifiers:
 
-```javascript
-const remark = require('remark');
-const remarkCorepass = require('remark-corepass');
+```typescript
+import remark from 'remark';
+import remarkCorepass from 'remark-corepass';
 
-remark()
-  .use(remarkCorepass, { enableIcanCheck: true })
-  .process('Your markdown text here', (err, file) => {
-    if (err) throw err;
+(async () => {
+  try {
+    const file = await remark()
+      .use(remarkCorepass, { enableIcanCheck: true })
+      .process('Your markdown text here');
     console.log(String(file));
-  });
+  } catch (err) {
+    console.error(err);
+  }
+})();
 ```
 
 The plugin searches for CorePass notations in the format `[domain@coreid]` or `[!cb1234...@coreid]` in your markdown content, converting them into clickable links and validating ICAN identifiers when enabled.
