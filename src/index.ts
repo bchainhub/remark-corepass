@@ -1,9 +1,15 @@
-import { Node } from 'unist';
+import { type Node } from 'unist';
 import { visit } from 'unist-util-visit';
 import Ican from '@blockchainhub/ican';
 
 interface CorepassOptions {
+  /**
+   * Enable ICAN check for CorePass.
+   */
   enableIcanCheck?: boolean;
+  /**
+   * Enable skipping ICAN check with sign "!".
+   */
   enableSkippingIcanCheck?: boolean;
 }
 
@@ -53,6 +59,11 @@ function isTextNode(node: Node): node is TextNode {
   return node.type === 'text';
 }
 
+/**
+ * A remark plugin to parse CorePass IDs (Core ID) and convert them to links.
+ * @param options - Options for the CorePass plugin.
+ * @returns A transformer for the AST.
+ */
 export default function remarkCorepass(options: CorepassOptions = {}): (ast: Node) => void {
   const defaults: CorepassOptions = {
     enableIcanCheck: true, // Enable Ican check for CorePass
