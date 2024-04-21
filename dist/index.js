@@ -11,8 +11,8 @@ const makeTextNode = (text) => ({
     value: text,
 });
 const makeStrikethroughNode = (text) => ({
-    type: 'delete',
-    children: [{ type: 'text', value: text }],
+    type: 'text',
+    value: `~~${text}~~`,
 });
 const shortenId = (hash) => `${hash.slice(0, 4)}…${hash.slice(-4)}`;
 const corepassPattern = /\[(!?)(((cb|ab|ce)[0-9]{2}[0-9a-f]{40})|((?:[a-z0-9_-]|\p{Emoji})+(?:\.(?:[a-z0-9_-]|\p{Emoji})+)*\.([a-z0-9]+)))@coreid\]/giu;
