@@ -61,4 +61,11 @@ CorePassHandlers('Transforms CoreID link defined with round brackets, w/o ican c
   assert.is(output, expected);
 });
 
+CorePassHandlers('Invalid CoreID link defined with round brackets', async () => {
+  const input = '[cb7047879011ea207df5b35a24ca6f0859dcfb145999@coreid]';
+  const output = normalizeString(await processMarkdown(input, { enableIcanCheck: true }));
+  const expected = '¬CB70…5999@coreid';
+  assert.is(output, expected);
+});
+
 CorePassHandlers.run();
