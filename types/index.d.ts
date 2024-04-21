@@ -6,7 +6,5 @@ declare module 'remark-corepass' {
     enableSkippingIcanCheck?: boolean;
   }
 
-  function remarkCorepass(options?: CorepassOptions): (ast: Node) => void;
-
-  export default remarkCorepass;
+  export default function remarkCorepass(options?: CorepassOptions): (ast: Node) => void;
 }

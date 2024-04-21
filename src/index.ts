@@ -30,8 +30,8 @@ interface TextNode extends Node {
 }
 
 interface DelNode extends Node {
-  type: 'delete';
-  children: Array<TextNode>;
+  type: 'text';
+  value: string;
 }
 
 const makeLinkNode = (url: string, text: string, title?: string): LinkNode => ({
@@ -47,8 +47,8 @@ const makeTextNode = (text: string): TextNode => ({
 });
 
 const makeStrikethroughNode = (text: string): DelNode => ({
-  type: 'delete',
-  children: [{ type: 'text', value: text }],
+  type: 'text',
+  value: `~~${text}~~`,
 });
 
 const shortenId = (hash: string) => `${hash.slice(0, 4)}…${hash.slice(-4)}`;
