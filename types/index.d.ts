@@ -1,4 +1,4 @@
-import { Node } from 'unist';
+import { Root } from 'mdast';
 
 declare module 'remark-corepass' {
   interface CorepassOptions {
@@ -6,5 +6,5 @@ declare module 'remark-corepass' {
     enableSkippingIcanCheck?: boolean;
   }
 
-  export default function remarkCorepass(options?: CorepassOptions): (ast: Node) => void;
+  export default function remarkCorepass(options?: CorepassOptions): (ast: Root) => void;
 }

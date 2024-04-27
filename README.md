@@ -1,6 +1,10 @@
 # Remark CorePass
 
-This Remark plugin, "remark-corepass," is designed to transform CorePass notations into markdown links, enhancing the integration of blockchain-based identifiers and Fediverse handles within markdown content.
+This Remark plugin, "remark-corepass," is designed to transform CorePass notations into Markdown links (when positively checked) and negated text (when negatively checked), enhancing the integration of CorePass identifiers (Core ID) within markdown content.
+
+## About Core ID
+
+Core ID is a unique identifier used to reference Core Assets, such as documents, images, videos, and other digital assets, within the [CorePass ecosystem](https://corepass.net). The Core ID is composed of an [ICAN (International Crypto Asset Number)](https://cip.coreblockchain.net/sk-SK/cip/cbc/cip-100) and an checksum, which can be used to validate the identifier.
 
 ## Installation
 
@@ -18,7 +22,7 @@ yarn add remark-corepass
 
 ## Usage
 
-Integrate the plugin into your Remark processing pipeline to automatically convert CorePass notations and optionally validate ICAN (International Core Asset Number) identifiers:
+Integrate the plugin into your Remark processing pipeline to automatically convert CorePass notations and optionally validate ICAN (International Crypto Asset Number) identifiers:
 
 ```typescript
 import remark from 'remark';
@@ -36,7 +40,7 @@ import remarkCorepass from 'remark-corepass';
 })();
 ```
 
-The plugin searches for CorePass notations in the format `[domain@coreid]` or `[!cb1234...@coreid]` in your markdown content, converting them into clickable links and validating ICAN identifiers when enabled.
+The plugin searches for CorePass notations in the format `[domain@coreid]` or `[!cb1234...@coreid]` in your markdown content, converting them to links and optionally validating ICAN identifiers, displaying invalid items as text.
 
 ## Options
 

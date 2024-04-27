@@ -12,54 +12,52 @@ const makeTextNode = (text) => ({
 });
 const shortenId = (hash) => `${hash.slice(0, 4)}…${hash.slice(-4)}`;
 const corepassPattern = /\[(!?)(((cb|ab|ce)[0-9]{2}[0-9a-f]{40})|((?:[a-z0-9_-]|\p{Emoji})+(?:\.(?:[a-z0-9_-]|\p{Emoji})+)*\.([a-z0-9]+)))@coreid\]/giu;
-function isTextNode(node) {
-    return node.type === 'text';
-}
+const isTextNode = (node) => node.type === 'text';
 export default function remarkCorepass(options = {}) {
     const defaults = {
         enableIcanCheck: true,
         enableSkippingIcanCheck: true,
     };
     const finalOptions = { ...defaults, ...options };
-    const transformer = (ast) => {
-        visit(ast, 'text', (node, index, parent) => {
+    return (tree) => {
+        visit(tree, 'text', (node, index, parent) => {
             if (!isTextNode(node) || !parent || typeof index !== 'number')
                 return;
-            const parentNode = parent;
-            let newNodes = [];
+            if (!('children' in parent) || !Array.isArray(parent.children))
+                return;
+            const matches = Array.from(node.value.matchAll(corepassPattern));
+            const newNodes = [];
             let lastIndex = 0;
-            const textNode = node;
-            textNode.value.replace(corepassPattern, (match, skip, fullId, cpId, net0, sld, tld, offset) => {
-                if (offset > lastIndex) {
-                    newNodes.push(makeTextNode(textNode.value.slice(lastIndex, offset)));
+            matches.forEach(match => {
+                const [fullMatch, skip, fullId, cpId, net0, sld, tld, offset = 0] = match;
+                const actualOffset = parseInt(offset, 10);
+                if (actualOffset > lastIndex) {
+                    newNodes.push(makeTextNode(node.value.slice(lastIndex, actualOffset)));
                 }
-                let id = fullId;
-                let willSkip = (finalOptions.enableSkippingIcanCheck) ? ((skip === '!') ? true : false) : false;
-                let displayName, fullName;
+                const willSkip = finalOptions.enableSkippingIcanCheck && skip === '!';
+                const url = `corepass:${fullId.toLowerCase()}`;
+                let fullName, displayName;
                 if (cpId !== '' && cpId !== undefined) {
-                    fullName = id.toUpperCase();
+                    fullName = fullId.toUpperCase();
                     displayName = shortenId(fullName);
-                    if (finalOptions.enableIcanCheck && !willSkip && !Ican.isValid(id, true)) {
+                    if (finalOptions.enableIcanCheck && !willSkip && !Ican.isValid(fullId, true)) {
                         newNodes.push(makeTextNode(`¬${displayName}@coreid`));
                     }
                     else {
-                        newNodes.push(makeLinkNode(`corepass:${id.toLowerCase()}`, `${displayName}@coreid`, fullName));
+                        newNodes.push(makeLinkNode(url, `${displayName}@coreid`, fullName));
                     }
                 }
                 else {
-                    displayName = `${id}`;
-                    newNodes.push(makeLinkNode(`corepass:${id.toLowerCase()}`, `${displayName}@coreid`, displayName));
+                    newNodes.push(makeLinkNode(url, `${fullId}@coreid`, fullId));
                 }
-                lastIndex = offset + match.length;
-                return '';
+                lastIndex = actualOffset + fullMatch.length;
             });
-            if (lastIndex < textNode.value.length) {
-                newNodes.push(makeTextNode(textNode.value.slice(lastIndex)));
+            if (lastIndex < node.value.length) {
+                newNodes.push(makeTextNode(node.value.slice(lastIndex)));
             }
             if (newNodes.length > 0) {
-                parentNode.children.splice(index, 1, ...newNodes);
+                parent.children.splice(index, 1, ...newNodes);
             }
         });
     };
-    return transformer;
 }
